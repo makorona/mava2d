@@ -35,7 +35,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     int enemyX = 300;
     int enemyY = 300;
-    int enemySpeed = 3;
+    int enemySpeed = 2;
 
     // Target position
     int targetX;
@@ -49,12 +49,16 @@ public class GamePanel extends JPanel implements Runnable {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(bgColor);
         this.setDoubleBuffered(true);
+        this.setLayout(null);
         this.addKeyListener(keyH);
         this.setFocusable(true);
 
         gameOverPanel = new GameOverPanel(screenWidth, screenHeight);
         this.setLayout(null);
         this.add(gameOverPanel);
+        gameOverPanel.setBounds(0, 0, screenWidth, screenHeight); // Center it 
+
+        this.setComponentZOrder(gameOverPanel, 0);
 
         generateNewTarget();
     }
@@ -110,6 +114,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void restartGame(){
         points = 0;
+        scorePanel.updateScore(0); // Update UI
+
         playerX = 100;
         playerY = 100;
 
@@ -120,14 +126,12 @@ public class GamePanel extends JPanel implements Runnable {
         gameOverPanel.hideGameLoss();
     }
 
-    public void enemyMovement(){
-        if (random.nextBoolean()) {
-            if (enemyX < playerX) enemyX += enemySpeed;
-            else if (enemyX > playerX) enemyX -= enemySpeed;
-        } else {
-            if (enemyY < playerY) enemyY += enemySpeed;
-            else if (enemyY > playerY) enemyY -= enemySpeed;
-        }
+    public void enemyMovement() {
+        if (enemyX < playerX) enemyX += enemySpeed;
+        else if (enemyX > playerX) enemyX -= enemySpeed;
+    
+        if (enemyY < playerY) enemyY += enemySpeed;
+        else if (enemyY > playerY) enemyY -= enemySpeed;
     }
 
     private void checkTargetCollision() {
@@ -146,9 +150,18 @@ public class GamePanel extends JPanel implements Runnable {
 
     private void checkEnemyCollision(){
         if (playerX < enemyX + tileSize && playerX + tileSize > enemyX &&
-            playerY < enemyX + tileSize && playerY + tileSize > enemyY){
+            playerY < enemyY + tileSize && playerY + tileSize > enemyY){
+                
                 isGameOver = true;
+                System.out.println("you eaten! end");
+
                 gameOverPanel.showGameLoss();
+                
+                gameOverPanel.revalidate();
+                gameOverPanel.repaint();
+                
+                this.revalidate();
+                this.repaint();
             }
     }
 
@@ -162,7 +175,8 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-      if (!isGameOver){  // Draw player
+      if (!isGameOver){  
+        // Draw player
         g2.setColor(Color.WHITE);
         g2.fillRect(playerX, playerY, tileSize, tileSize);
 
@@ -171,9 +185,8 @@ public class GamePanel extends JPanel implements Runnable {
         g2.fillRect(targetX, targetY, originalTileSize, originalTileSize);
 
         g2.setColor(Color.RED);
-        g2.fillRect(enemyX, enemyY, tileSize, tileSize);}
-
-        
+        g2.fillRect(enemyX, enemyY, tileSize, tileSize);
+    }
 
         g2.dispose();
     }
