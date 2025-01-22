@@ -90,7 +90,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         if(!isGameOver){ 
-            if(keyH.up && playerY > 0) {
+        if(keyH.up && playerY > 0) {
             playerY -= playerSpeed;
         } 
         if (keyH.down && playerY < screenHeight - tileSize) {
