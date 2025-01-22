@@ -12,12 +12,12 @@ public class ScorePanel extends JPanel {
         this.setBackground(new Color(30, 30, 30)); // Dark background
         scoreLabel = new JLabel("Points: 0");
         scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        scoreLabel.setForeground(Color.WHITE);
-        
+        scoreLabel.setForeground(Color.WHITE);        
         this.add(scoreLabel);
     }
 
     public void updateScore(int points) {
         scoreLabel.setText("Points: " + points);
     }
+
 }

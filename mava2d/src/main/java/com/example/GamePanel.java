@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable {
     Random random = new Random();
+    private GameOverPanel gameOverPanel;
+    boolean isGameOver = false;
 
     // Screen settings
     final int originalTileSize = 16;
@@ -49,6 +51,10 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+
+        gameOverPanel = new GameOverPanel(screenWidth, screenHeight);
+        this.setLayout(null);
+        this.add(gameOverPanel);
 
         generateNewTarget();
     }
@@ -99,6 +105,7 @@ public class GamePanel extends JPanel implements Runnable {
             restartGame();
         }
         enemyMovement();
+        
     }
 
     private void restartGame(){
@@ -110,6 +117,7 @@ public class GamePanel extends JPanel implements Runnable {
         enemyY = 400;
         generateNewTarget();
         isGameOver = false;
+        gameOverPanel.hideGameLoss();
     }
 
     public void enemyMovement(){
@@ -132,6 +140,7 @@ public class GamePanel extends JPanel implements Runnable {
             // Update score panel label
             scorePanel.updateScore(points);
             System.out.println("Points: " + points);
+
         }
     }
 
@@ -139,10 +148,9 @@ public class GamePanel extends JPanel implements Runnable {
         if (playerX < enemyX + tileSize && playerX + tileSize > enemyX &&
             playerY < enemyX + tileSize && playerY + tileSize > enemyY){
                 isGameOver = true;
+                gameOverPanel.showGameLoss();
             }
     }
-
-    boolean isGameOver = false;
 
     private void generateNewTarget() {
         targetX = random.nextInt(screenWidth - originalTileSize);
@@ -154,7 +162,7 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        // Draw player
+      if (!isGameOver){  // Draw player
         g2.setColor(Color.WHITE);
         g2.fillRect(playerX, playerY, tileSize, tileSize);
 
@@ -163,7 +171,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.fillRect(targetX, targetY, originalTileSize, originalTileSize);
 
         g2.setColor(Color.RED);
-        g2.fillRect(enemyX, enemyY, tileSize, tileSize);
+        g2.fillRect(enemyX, enemyY, tileSize, tileSize);}
 
         
 
